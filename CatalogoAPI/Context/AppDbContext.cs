@@ -1,7 +1,5 @@
 ﻿using CatalogoAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace CatalogoAPI.Context;
 
