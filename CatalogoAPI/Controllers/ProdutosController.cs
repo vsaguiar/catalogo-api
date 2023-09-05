@@ -1,19 +1,32 @@
 ﻿using CatalogoAPI.Context;
-using Microsoft.AspNetCore.Http;
+using CatalogoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CatalogoAPI.Controllers
+namespace CatalogoAPI.Controllers;
+
+[Route("[controller]")]
+[ApiController]
+public class ProdutosController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class ProdutosController : ControllerBase
+
+    private readonly AppDbContext _context;
+
+    public ProdutosController(AppDbContext context)
     {
-
-        private readonly AppDbContext _context;
-
-        public ProdutosController(AppDbContext context)
-        {
-            _context = context;
-        }
+        _context = context;
     }
+
+
+    [HttpGet]
+    public ActionResult<IEnumerable<Produto>> Get()
+    {
+        var produtos = _context.Produtos.ToList();
+        if (produtos is null)
+        {
+            return NotFound("Produtos não encontrados...");
+        }
+
+        return produtos;
+    }
+
 }

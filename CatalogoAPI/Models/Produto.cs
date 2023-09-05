@@ -1,6 +1,7 @@
-﻿namespace CatalogoAPI.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CatalogoAPI.Models;
 
 [Table("Produtos")]
 public class Produto
