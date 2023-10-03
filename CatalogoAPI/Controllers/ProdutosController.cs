@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CatalogoAPI.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class ProdutosController : ControllerBase
 {
@@ -31,7 +31,7 @@ public class ProdutosController : ControllerBase
     }
 
 
-    [HttpGet("{id:int}", Name ="ObterProduto")]
+    [HttpGet("{id:int:min(1)}", Name ="ObterProduto")] // Restrição de rota com o valor mínimo para evitar consulta desnecessária no banco
     public ActionResult<Produto> Get(int id)
     {
         var produtos = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
