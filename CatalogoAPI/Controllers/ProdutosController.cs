@@ -1,4 +1,5 @@
 ﻿using CatalogoAPI.Context;
+using CatalogoAPI.Filters;
 using CatalogoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class ProdutosController : ControllerBase
 
 
     [HttpGet]
+    [ServiceFilter(typeof(ApiLoggingFilter))]
     public ActionResult<IEnumerable<Produto>> Get()
     {
         var produtos = _context.Produtos.AsNoTracking().ToList();
