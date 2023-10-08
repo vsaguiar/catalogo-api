@@ -1,4 +1,5 @@
 using CatalogoAPI.Context;
+using CatalogoAPI.Extensions;
 using CatalogoAPI.Filters;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -26,6 +27,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+// Adiciona o middleware de tratamento de erros
+app.ConfigureExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
