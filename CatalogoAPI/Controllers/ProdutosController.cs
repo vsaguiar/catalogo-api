@@ -1,8 +1,7 @@
-﻿using CatalogoAPI.Context;
-using CatalogoAPI.Filters;
+﻿using CatalogoAPI.Filters;
 using CatalogoAPI.Models;
+using CatalogoAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CatalogoAPI.Controllers;
 
@@ -11,11 +10,17 @@ namespace CatalogoAPI.Controllers;
 public class ProdutosController : ControllerBase
 {
 
-    private readonly AppDbContext _context;
-
-    public ProdutosController(AppDbContext context)
+    private readonly IUnitOfWork _uof;
+    public ProdutosController(UnitOfWork context)
     {
-        _context = context;
+        _uof = context;
+    }
+
+
+    [HttpGet("menorpreco")]
+    public ActionResult<IEnumerable<Produto>> GetProdutosPrecos()
+    {
+        return _uof.ProdutoRepository.GetProdutosPorPrecos().ToList();
     }
 
 
@@ -23,7 +28,7 @@ public class ProdutosController : ControllerBase
     [ServiceFilter(typeof(ApiLoggingFilter))]
     public ActionResult<IEnumerable<Produto>> Get()
     {
-        var produtos = _context.Produtos.AsNoTracking().ToList();
+        var produtos = _uof.ProdutoRepository.Get().ToList();
         if (produtos is null)
         {
             return NotFound("Produtos não encontrados...");
@@ -36,7 +41,7 @@ public class ProdutosController : ControllerBase
     [HttpGet("{id:int:min(1)}", Name ="ObterProduto")] // Restrição de rota com o valor mínimo para evitar consulta desnecessária no banco
     public ActionResult<Produto> Get(int id)
     {
-        var produtos = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+        var produtos = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
         if (produtos is null)
         {
             return NotFound("Produto não encontrado.");
@@ -53,8 +58,8 @@ public class ProdutosController : ControllerBase
         {
             return BadRequest();
         }
-        _context.Produtos.Add(produto);
-        _context.SaveChanges();
+        _uof.ProdutoRepository.Add(produto);
+        _uof.Commit();
 
         return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
     }
@@ -68,8 +73,8 @@ public class ProdutosController : ControllerBase
             return BadRequest();
         }
 
-        _context.Entry(produto).State = EntityState.Modified;
-        _context.SaveChanges();
+        _uof.ProdutoRepository.Update(produto);
+        _uof.Commit();
 
         return Ok(produto);
     }
@@ -78,15 +83,15 @@ public class ProdutosController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult Delete(int id)
     {
-        var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+        var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
 
         if (produto is null)
         {
             return NotFound("Produto não localizado.");
         }
 
-        _context.Produtos.Remove(produto);
-        _context.SaveChanges();
+        _uof.ProdutoRepository.Delete(produto);
+        _uof.Commit();
 
         return Ok(produto);
     }
