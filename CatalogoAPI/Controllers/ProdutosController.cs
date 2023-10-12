@@ -11,7 +11,7 @@ public class ProdutosController : ControllerBase
 {
 
     private readonly IUnitOfWork _uof;
-    public ProdutosController(UnitOfWork context)
+    public ProdutosController(IUnitOfWork context)
     {
         _uof = context;
     }
