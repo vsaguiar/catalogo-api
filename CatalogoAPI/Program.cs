@@ -4,6 +4,7 @@ using CatalogoAPI.Extensions;
 using CatalogoAPI.Filters;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using CatalogoAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ApiLoggingFilter>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Registrando o padrão Unit Of Work
 
 // Obtém a string de conexão
 string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
