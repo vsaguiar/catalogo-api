@@ -74,7 +74,7 @@ public class ProdutosController : ControllerBase
         _uof.ProdutoRepository.Add(produto);
         _uof.Commit();
 
-        var produtoDto = _mapper.Map<ProdutoDTO>(produtoDTO);
+        var produtoDto = _mapper.Map<ProdutoDTO>(produto);
 
         return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produtoDto);
     }
