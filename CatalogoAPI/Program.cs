@@ -5,6 +5,8 @@ using CatalogoAPI.Filters;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using CatalogoAPI.Repository;
+using CatalogoAPI.DTOs.Mappings;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ApiLoggingFilter>();
+
+#region Registrando o serviço AutoMapper
+
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+IMapper mapper = mappingConfig.CreateMapper();
+
+builder.Services.AddSingleton(mapper);
+
+#endregion
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Registrando o padrão Unit Of Work
 
