@@ -2,6 +2,7 @@
 using CatalogoAPI.DTOs;
 using CatalogoAPI.Filters;
 using CatalogoAPI.Models;
+using CatalogoAPI.Pagination;
 using CatalogoAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,9 +33,9 @@ public class ProdutosController : ControllerBase
 
     [HttpGet]
     [ServiceFilter(typeof(ApiLoggingFilter))]
-    public ActionResult<IEnumerable<ProdutoDTO>> Get()
+    public ActionResult<IEnumerable<ProdutoDTO>> Get([FromQuery] ProdutosParameters produtosParameters)
     {
-        var produtos = _uof.ProdutoRepository.Get().ToList();
+        var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters).ToList();
 
         if (produtos is null)
         {
@@ -43,7 +44,7 @@ public class ProdutosController : ControllerBase
 
         var produtosDTO = _mapper.Map<List<ProdutoDTO>>(produtos);
 
-        return produtosDTO;
+        return Ok(produtosDTO);
     }
 
 
