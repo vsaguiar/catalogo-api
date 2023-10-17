@@ -1,6 +1,7 @@
 ﻿using CatalogoAPI.Context;
 using CatalogoAPI.Models;
 using CatalogoAPI.Pagination;
+using Microsoft.EntityFrameworkCore;
 
 namespace CatalogoAPI.Repository;
 
@@ -22,8 +23,8 @@ public class ProdutoRepository : Repository<Produto>, IProdutoRepository
 
     }
 
-    public IEnumerable<Produto> GetProdutosPorPrecos()
+    public async Task<IEnumerable<Produto>> GetProdutosPorPrecos()
     {
-        return Get().OrderBy(p => p.Preco).ToList();
+        return await Get().OrderBy(p => p.Preco).ToListAsync();
     }
 }
