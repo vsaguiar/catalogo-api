@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using CatalogoAPI.Context;
 using CatalogoAPI.DTOs;
 using CatalogoAPI.Models;
+using CatalogoAPI.Pagination;
 using CatalogoAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace CatalogoAPI.Controllers
 {
@@ -31,9 +31,23 @@ namespace CatalogoAPI.Controllers
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<CategoriaDTO>> Get()
+        public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery] CategoriasParameters categoriasParameters)
         {
-            var categorias = _context.CategoriaRepository.Get().ToList();
+            var categorias = _context.CategoriaRepository.GetCategorias(categoriasParameters);
+
+            var metadata = new
+            {
+                categorias.TotalCount,
+                categorias.PageSize,
+                categorias.CurrentPage,
+                categorias.TotalPages,
+                categorias.HasNext,
+                categorias.HasPrevious
+
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+
             var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
             return categoriasDTO;
         }
