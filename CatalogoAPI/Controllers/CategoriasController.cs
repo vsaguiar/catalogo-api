@@ -22,18 +22,18 @@ namespace CatalogoAPI.Controllers
 
 
         [HttpGet("produtos")]
-        public ActionResult<IEnumerable<CategoriaDTO>> GetCategoriaProdutos()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetCategoriaProdutos()
         {
-            var categorias = _context.CategoriaRepository.GetCategoriasProdutos().ToList();
+            var categorias = await _context.CategoriaRepository.GetCategoriasProdutos();
             var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
             return categoriasDTO;
         }
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery] CategoriasParameters categoriasParameters)
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get([FromQuery] CategoriasParameters categoriasParameters)
         {
-            var categorias = _context.CategoriaRepository.GetCategorias(categoriasParameters);
+            var categorias = await _context.CategoriaRepository.GetCategorias(categoriasParameters);
 
             var metadata = new
             {
@@ -54,9 +54,10 @@ namespace CatalogoAPI.Controllers
 
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
-        public ActionResult<CategoriaDTO> Get(int id)
+        public async Task<ActionResult<CategoriaDTO>> Get(int id)
         {
-            var categoria = _context.CategoriaRepository.GetById(c => c.CategoriaId == id);
+            var categoria = await _context.CategoriaRepository.GetById(c => c.CategoriaId == id);
+
             if (categoria is null)
             {
                 return NotFound("Categoria não localizada.");
@@ -69,7 +70,7 @@ namespace CatalogoAPI.Controllers
 
 
         [HttpPost]
-        public ActionResult Post([FromBody] CategoriaDTO categoriaDTO)
+        public async Task<ActionResult> Post([FromBody] CategoriaDTO categoriaDTO)
         {
             var categoria = _mapper.Map<Categoria>(categoriaDTO);
 
@@ -79,7 +80,7 @@ namespace CatalogoAPI.Controllers
             }
 
             _context.CategoriaRepository.Add(categoria);
-            _context.Commit();
+            await _context.Commit();
 
             var categoriaDto = _mapper.Map<CategoriaDTO>(categoria);
 
@@ -88,7 +89,7 @@ namespace CatalogoAPI.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, [FromBody] CategoriaDTO categoriaDTO)
+        public async Task<ActionResult> Put(int id, [FromBody] CategoriaDTO categoriaDTO)
         {
             if (id != categoriaDTO.CategoriaId)
             {
@@ -98,16 +99,16 @@ namespace CatalogoAPI.Controllers
             var categoria = _mapper.Map<Categoria>(categoriaDTO);
 
             _context.CategoriaRepository.Update(categoria);
-            _context.Commit();
+            await _context.Commit();
 
             return Ok(categoria);
         }
 
 
         [HttpDelete("{id:int}")]
-        public ActionResult<CategoriaDTO> Delete(int id)
+        public async Task<ActionResult<CategoriaDTO>> Delete(int id)
         {
-            var categoria = _context.CategoriaRepository.GetById(c => c.CategoriaId == id);
+            var categoria = await _context.CategoriaRepository.GetById(c => c.CategoriaId == id);
 
             if (categoria is null)
             {
@@ -115,7 +116,7 @@ namespace CatalogoAPI.Controllers
             }
 
             _context.CategoriaRepository.Delete(categoria);
-            _context.Commit();
+            await _context.Commit();
 
             var categoriaDTO = _mapper.Map<CategoriaDTO>(categoria);
 
