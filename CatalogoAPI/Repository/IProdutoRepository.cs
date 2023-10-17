@@ -8,5 +8,5 @@ public interface IProdutoRepository : IRepository<Produto>
     IEnumerable<Produto> GetProdutosPorPrecos();
 
     // Paginação
-    IEnumerable<Produto> GetProdutos(ProdutosParameters produtosParameters);
+    PagedList<Produto> GetProdutos(ProdutosParameters produtosParameters);
 }

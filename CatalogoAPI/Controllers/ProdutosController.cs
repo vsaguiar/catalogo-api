@@ -5,6 +5,7 @@ using CatalogoAPI.Models;
 using CatalogoAPI.Pagination;
 using CatalogoAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace CatalogoAPI.Controllers;
 
@@ -35,12 +36,25 @@ public class ProdutosController : ControllerBase
     [ServiceFilter(typeof(ApiLoggingFilter))]
     public ActionResult<IEnumerable<ProdutoDTO>> Get([FromQuery] ProdutosParameters produtosParameters)
     {
-        var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters).ToList();
+        var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters);
 
         if (produtos is null)
         {
             return NotFound("Produtos não encontrados...");
         }
+
+        var metadata = new
+        {
+            produtos.TotalCount,
+            produtos.PageSize,
+            produtos.CurrentPage,
+            produtos.TotalPages,
+            produtos.HasNext,
+            produtos.HasPrevious
+
+        };
+
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
         var produtosDTO = _mapper.Map<List<ProdutoDTO>>(produtos);
 
