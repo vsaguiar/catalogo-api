@@ -5,14 +5,16 @@ using CatalogoAPI.Models;
 using CatalogoAPI.Pagination;
 using CatalogoAPI.Repository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace CatalogoAPI.Controllers;
 
-[Authorize(AuthenticationSchemes = "Bearer")]
+//[Authorize(AuthenticationSchemes = "Bearer")]
 [Route("api/[controller]")]
 [ApiController]
+[EnableCors("PermitirApiRequest")]
 public class ProdutosController : ControllerBase
 {
 

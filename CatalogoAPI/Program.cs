@@ -17,6 +17,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+#region CORS
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("PermitirApiRequest", 
+        builder => builder
+        .WithOrigins("https://www.apirequest.io")
+        .WithMethods("GET"));
+});
+#endregion
+
 builder.Services
     .AddControllers()
     .AddJsonOptions
@@ -24,6 +35,9 @@ builder.Services
         options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
     );
 builder.Services.AddEndpointsApiExplorer();
+
+#region Personalizando Swagger para usar autenticação JWT
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CatalogoAPI", Version = "v1" });
@@ -54,6 +68,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+#endregion
+
 builder.Services.AddScoped<ApiLoggingFilter>();
 
 #region Registrando o serviço AutoMapper
@@ -70,15 +86,19 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Registrando o padrão Unit Of Work
 
-// Obtém a string de conexão
+#region String de conexão
+
 string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
+
+#endregion
 
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+#region Autenticação JWT
 
 //JWT
 //adiciona o manipulador de autenticacao e define o
@@ -98,7 +118,7 @@ builder.Services
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
     });
 
-
+#endregion
 
 builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
 {
@@ -121,5 +141,11 @@ app.ConfigureExceptionHandler();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseCors(opt => opt
+//.WithOrigins("https://www.apirequest.io")
+//.WithMethods("GET"));
+app.UseCors(opt => opt.AllowAnyOrigin());
+
 app.MapControllers();
 app.Run();
