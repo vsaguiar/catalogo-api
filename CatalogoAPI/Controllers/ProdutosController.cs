@@ -12,6 +12,8 @@ using System.Text.Json;
 namespace CatalogoAPI.Controllers;
 
 //[Authorize(AuthenticationSchemes = "Bearer")]
+[ApiConventionType(typeof(DefaultApiConventions))]
+[Produces("application/json")]
 [Route("api/[controller]")]
 [ApiController]
 [EnableCors("PermitirApiRequest")]
