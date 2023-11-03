@@ -12,7 +12,7 @@ using System.Text.Json;
 namespace CatalogoAPI.Controllers;
 
 //[Authorize(AuthenticationSchemes = "Bearer")]
-[ApiConventionType(typeof(DefaultApiConventions))]
+[ApiConventionType(typeof(DefaultApiConventions))] // o conjunto padrão de convenções (tipos de retorno. ex: 200, 404 etc) é aplicado a todas as Actions
 [Produces("application/json")]
 [Route("api/[controller]")]
 [ApiController]

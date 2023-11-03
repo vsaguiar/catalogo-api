@@ -8,6 +8,7 @@ using CatalogoAPI.Repository;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace CatalogoApixUnitTests;
 

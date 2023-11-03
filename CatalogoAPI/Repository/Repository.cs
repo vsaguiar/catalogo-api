@@ -20,7 +20,7 @@ public class Repository<T> : IRepository<T> where T : class
 
     public async Task<T> GetById(Expression<Func<T,bool>> predicate)
     {
-        return await _context.Set<T>().SingleOrDefaultAsync(predicate);
+        return await _context.Set<T>().AsNoTracking().SingleOrDefaultAsync(predicate);
     }
     
     public void Add(T entity)

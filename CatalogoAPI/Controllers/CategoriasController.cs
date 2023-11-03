@@ -10,8 +10,8 @@ using System.Text.Json;
 
 namespace CatalogoAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [ApiConventionType(typeof(DefaultApiConventions))]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ApiConventionType(typeof(DefaultApiConventions))] // o conjunto padrão de convenções (tipos de retorno. ex: 200, 404 etc) é aplicado a todas as Actions
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -38,23 +38,35 @@ namespace CatalogoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get([FromQuery] CategoriasParameters categoriasParameters)
         {
-            var categorias = await _context.CategoriaRepository.GetCategorias(categoriasParameters);
-
-            var metadata = new
+            try
             {
-                categorias.TotalCount,
-                categorias.PageSize,
-                categorias.CurrentPage,
-                categorias.TotalPages,
-                categorias.HasNext,
-                categorias.HasPrevious
+                var categorias = await _context.CategoriaRepository.GetCategorias(categoriasParameters);
 
-            };
+                var metadata = new
+                {
+                    categorias.TotalCount,
+                    categorias.PageSize,
+                    categorias.CurrentPage,
+                    categorias.TotalPages,
+                    categorias.HasNext,
+                    categorias.HasPrevious
 
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+                };
 
-            var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
-            return categoriasDTO;
+                Response?.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+
+                if (categorias is null)
+                    return NotFound("Categoria não encontrada.");
+
+                var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
+                return categoriasDTO;
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+            
         }
 
 
